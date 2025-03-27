@@ -25,6 +25,7 @@ API.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 403) {
+      // should handle refresh token and re-login instead
       store.dispatch(logout());
     }
     return Promise.reject(error);

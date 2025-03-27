@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "@/services/authService";
 import { ILoginPayload, IRegisterPayload } from "@/types/auth";
+import { AxiosError } from "axios";
 
 // Get current user action
 export const getMe = createAsyncThunk(
@@ -26,8 +27,9 @@ export const login = createAsyncThunk(
       const data = await authService.login(credentials);
       localStorage.setItem("token", data.token);
       return data.user;
-    } catch (error) {
-      return rejectWithValue(error);
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError;
+      return rejectWithValue(axiosError.response?.data || "Login failed");
     }
   }
 );
@@ -35,11 +37,16 @@ export const login = createAsyncThunk(
 // Register action
 export const register = createAsyncThunk(
   "auth/register",
-  async (data: IRegisterPayload, { rejectWithValue }) => {
+  async (payload: IRegisterPayload, { rejectWithValue }) => {
     try {
-      return await authService.register(data);
-    } catch (error) {
-      return rejectWithValue(error);
+      const data = await authService.register(payload);
+      localStorage.setItem("token", data.token);
+      return data.user;
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError;
+      return rejectWithValue(
+        axiosError.response?.data || "Registration failed"
+      );
     }
   }
 );
