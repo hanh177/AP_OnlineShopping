@@ -1,0 +1,42 @@
+services:
+  user-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./user-service
+    container_name: user-service
+    ports:
+      - "4001:4001"
+    env_file:
+      - ./user-service/.env
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:6
+    restart: always
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+  nginx-proxy:
+    build:
+      dockerfile: Dockerfile
+      context: ./proxy
+    depends_on:
+      - user-service
+    ports:
+      - "4000:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  mongo_data:
