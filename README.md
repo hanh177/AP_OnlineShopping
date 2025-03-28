@@ -68,7 +68,7 @@ The frontend will be available at `http://localhost:5173`
 cd be/user-service
 npm install
 cp .env.example .env  # Create and configure your environment variables
-npm run dev
+npm start
 ```
 
 3. Configure API Gateway:
@@ -77,7 +77,7 @@ npm run dev
 cd ../api-gateway
 npm install
 cp .env.example .env  # Create and configure your environment variables
-npm run dev
+npm start
 ```
 
 4. Configure Nginx Proxy:
@@ -113,7 +113,7 @@ JWT_SECRET=your_jwt_secret
 
 # API Gateway (.env)
 PORT=4000
-USER_SERVICE_URL=http://localhost:4001
+APP_USER_PORT=4001
 ```
 
 ### Frontend
@@ -127,7 +127,7 @@ VITE_API_URL=http://localhost:4000
 ## Development
 
 - Frontend: `npm run dev` (Vite dev server)
-- Backend Services: `npm run dev` (Nodemon for auto-reload)
+- Backend Services: `npm start` (Nodemon for auto-reload)
 
 ## Building for Production
 
