@@ -10,20 +10,16 @@ router.get(
   asyncHandler(userController.getMe)
 );
 
-router.get("/", (req, res) => {
-  res.send("Get list users");
-});
+router.get("/", asyncHandler(userController.getUsers));
 
-router.get("/:id", (req, res) => {
-  res.send("Get user by id");
-});
+router.get("/:id", asyncHandler(userController.getUserById));
 
-router.post("/", (req, res) => {
-  res.send("Create a user");
-});
+router.post("/", asyncHandler(userController.createUser));
 
-router.put("/:id", (req, res) => {
-  res.send("Update the user");
-});
+router.put(
+  "/:id",
+  asyncHandler(authMiddleware),
+  asyncHandler(userController.updateUser)
+);
 
 module.exports = router;
