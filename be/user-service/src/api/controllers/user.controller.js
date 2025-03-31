@@ -1,18 +1,35 @@
+const { OK, CREATED } = require("../../common/successResponse");
+
 class UserController {
   async getUsers(req, res) {
-    res.send("Get list users");
+    return OK({
+      res,
+      metadata: req.user,
+    });
   }
   async getUserById(req, res) {
-    res.send("Get user by id");
+    return OK({
+      res,
+      metadata: req.user,
+    });
   }
   async getMe(req, res) {
-    res.json(req.user);
+    return OK({
+      res,
+      metadata: req.user,
+    });
   }
   async createUser(req, res) {
-    res.send("Create a user");
+    return CREATED({
+      res,
+      metadata: req.body,
+    });
   }
   async updateUser(req, res) {
-    res.send("Update the user");
+    return OK({
+      res,
+      metadata: req.body,
+    });
   }
 }
 
