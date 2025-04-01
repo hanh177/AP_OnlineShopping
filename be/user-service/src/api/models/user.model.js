@@ -71,7 +71,15 @@ userSchema.methods.toJSON = function () {
 };
 
 userSchema.methods.getPublicFields = function () {
-  return pick(this, ["_id", "name", "email"]);
+  return pick(this, [
+    "_id",
+    "name",
+    "email",
+    "role",
+    "avatar",
+    "phone",
+    "address",
+  ]);
 };
 
 const User = mongoose.model("User", userSchema);
