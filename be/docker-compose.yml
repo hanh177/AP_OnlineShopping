@@ -13,6 +13,20 @@ services:
     networks:
       - app-network
 
+  product-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./product-service
+    container_name: product-service
+    ports:
+      - "4002:4002"
+    env_file:
+      - ./product-service/.env
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
   mongodb:
     image: mongo:6
     restart: always
