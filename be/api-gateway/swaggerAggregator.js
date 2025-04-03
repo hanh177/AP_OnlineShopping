@@ -22,7 +22,10 @@ const getAggregatedDocs = async () => {
       version: "1.0.0",
     },
     paths: {},
-    components: {},
+    components: {
+      schemas: {},
+      securitySchemes: {},
+    },
     servers: [
       {
         url: `http://localhost:${APP_PORT}`,
@@ -42,7 +45,14 @@ const getAggregatedDocs = async () => {
       });
 
       // merge components (if any)
-      Object.assign(docs.components, components || {});
+      docs.components.schemas = {
+        ...docs.components.schemas,
+        ...components.schemas,
+      };
+      docs.components.securitySchemes = {
+        ...docs.components.securitySchemes,
+        ...components.securitySchemes,
+      };
     } catch (error) {
       console.error(
         `⚠️ Error fetching docs from ${service.name}:`,
