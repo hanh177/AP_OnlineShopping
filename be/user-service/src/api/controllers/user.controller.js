@@ -82,6 +82,9 @@ class UserController {
   }
   async uploadAvatar(req, res) {
     const { file } = req;
+    if (!file) {
+      throw BadRequest("File is required");
+    }
     const avatarUrl = await uploadFile(file);
     await User.findByIdAndUpdate(
       req.user._id,
@@ -90,7 +93,9 @@ class UserController {
     );
     return OK({
       res,
-      metadata: avatarUrl,
+      metadata: {
+        avatar: avatarUrl,
+      },
     });
   }
 }

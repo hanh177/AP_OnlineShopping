@@ -406,7 +406,12 @@
                     "message": { "type": "string", "example": "OK" },
                     "status": { "type": "number", "example": 200 },
                     "metadata": {
-                      "type": "object"
+                      "type": "object",
+                      "properties": {
+                        "avatar": {
+                          "type": "string"
+                        }
+                      }
                     }
                   }
                 }
