@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { pick } = require("lodash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const { ROLES } = require("../../common/constant");
 // Define the schema for the user model
 const userSchema = new mongoose.Schema(
   {
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: Object.values(ROLES),
       default: "user",
     },
     avatar: {

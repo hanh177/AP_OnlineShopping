@@ -230,6 +230,38 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "OK" },
+                    "status": { "type": "number", "example": 200 },
+                    "metadata": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/me": {
@@ -294,7 +326,7 @@
       },
       "put": {
         "tags": ["Users"],
-        "summary": "Update user",
+        "summary": "Admin updates user",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
@@ -353,6 +385,11 @@
                     "type": "string",
                     "format": "binary"
                   }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "contentType": "image/jpeg, image/png, image/jpg"
                 }
               }
             }

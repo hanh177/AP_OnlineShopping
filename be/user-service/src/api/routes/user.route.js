@@ -1,7 +1,8 @@
 const express = require("express");
 const asyncHandler = require("express-async-handler");
 const userController = require("../controllers/user.controller");
-const { requireAuth, isAdmin } = require("../middlewares/auth");
+const { requireAuth, hasRole } = require("../middlewares/auth");
+const { ROLES } = require("../../common/constant");
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -18,20 +19,28 @@ router.get("/:id", asyncHandler(userController.getUserById));
 
 router.post(
   "/",
-  asyncHandler(isAdmin),
+  asyncHandler(requireAuth),
+  asyncHandler(hasRole(ROLES.ADMIN)),
   asyncHandler(userController.createUser)
+);
+
+router.put(
+  "/",
+  asyncHandler(requireAuth),
+  asyncHandler(userController.updateUser)
 );
 
 router.put(
   "/:id",
   asyncHandler(requireAuth),
+  asyncHandler(hasRole(ROLES.ADMIN)),
   asyncHandler(userController.updateUser)
 );
 
 router.post(
   "/upload-avatar",
-  upload.single("file"),
   asyncHandler(requireAuth),
+  upload.single("file"),
   asyncHandler(userController.uploadAvatar)
 );
 

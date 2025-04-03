@@ -3,6 +3,7 @@ const { uploadFile } = require("../../common/s3Client");
 const User = require("../models/user.model");
 const { NotFound, BadRequest } = require("../../common/errorResponse");
 const { toObjectId } = require("../../common/util");
+const { ROLES } = require("../../common/constant");
 class UserController {
   async getUsers(req, res) {
     const {
@@ -66,7 +67,11 @@ class UserController {
   }
   async updateUser(req, res) {
     const userData = req.body;
-    const user = await User.findByIdAndUpdate(req.user._id, userData, {
+    const id =
+      req.user.role === ROLES.ADMIN && req.params.id
+        ? req.params.id
+        : req.user._id;
+    const user = await User.findByIdAndUpdate(id, userData, {
       new: true,
     });
 
