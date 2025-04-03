@@ -26,8 +26,36 @@ app.use("/docs", swaggerUi.serve, async (req, res, next) => {
   return swaggerUi.setup(docs)(req, res, next);
 });
 
-app.use("/users", proxy(`http://localhost:${APP_USER_PORT}`));
-app.use("/products", proxy(`http://localhost:${APP_PRODUCT_PORT}`));
+// Configure proxy for user service with file upload support
+app.use(
+  "/users",
+  proxy(`http://localhost:${APP_USER_PORT}`, {
+    // Preserve the original request body
+    preserveHostHdr: true,
+    // Don't parse the body, let the target service handle it
+    parseReqBody: false,
+    // Forward the original headers
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+      proxyReqOpts.headers["Content-Type"] = srcReq.headers["content-type"];
+      return proxyReqOpts;
+    },
+  })
+);
+
+app.use(
+  "/products",
+  proxy(`http://localhost:${APP_PRODUCT_PORT}`, {
+    // Preserve the original request body
+    preserveHostHdr: true,
+    // Don't parse the body, let the target service handle it
+    parseReqBody: false,
+    // Forward the original headers
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+      proxyReqOpts.headers["Content-Type"] = srcReq.headers["content-type"];
+      return proxyReqOpts;
+    },
+  })
+);
 
 app.listen(APP_PORT, () => {
   console.log(`Gateway is Listening to Port ${APP_PORT}`);
