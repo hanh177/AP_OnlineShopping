@@ -36,7 +36,8 @@ app.use(
     parseReqBody: false,
     // Forward the original headers
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
-      proxyReqOpts.headers["Content-Type"] = srcReq.headers["content-type"];
+      if (srcReq.headers["content-type"])
+        proxyReqOpts.headers["Content-Type"] = srcReq.headers["content-type"];
       return proxyReqOpts;
     },
   })
@@ -51,7 +52,8 @@ app.use(
     parseReqBody: false,
     // Forward the original headers
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
-      proxyReqOpts.headers["Content-Type"] = srcReq.headers["content-type"];
+      if (srcReq.headers["content-type"])
+        proxyReqOpts.headers["Content-Type"] = srcReq.headers["content-type"];
       return proxyReqOpts;
     },
   })
