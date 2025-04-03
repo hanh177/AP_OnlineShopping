@@ -1,0 +1,13 @@
+{
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get all products",
+        "responses": {
+          "200": { "description": "List of products" }
+        }
+      }
+    }
+  }
+}
