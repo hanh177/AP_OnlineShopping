@@ -169,8 +169,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "success" },
-                    "message": { "type": "number", "example": 200 },
+                    "message": { "type": "string", "example": "OK" },
+                    "status": { "type": "number", "example": 200 },
                     "metadata": {
                       "$ref": "#/components/schemas/ProductListResponse"
                     }
@@ -233,12 +233,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "success" },
-                    "message": {
-                      "type": "string",
-                      "example": "Product created successfully"
-                    },
-                    "data": {
+                    "message": { "type": "string", "example": "OK" },
+                    "status": { "type": "number", "example": 201 },
+                    "metadata": {
                       "$ref": "#/components/schemas/ProductResponse"
                     }
                   }
@@ -292,8 +289,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "success" },
-                    "data": {
+                    "message": { "type": "string", "example": "OK" },
+                    "status": { "type": "number", "example": 200 },
+                    "metadata": {
                       "$ref": "#/components/schemas/ProductResponse"
                     }
                   }
@@ -355,12 +353,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "success" },
-                    "message": {
-                      "type": "string",
-                      "example": "Product updated successfully"
-                    },
-                    "data": {
+                    "message": { "type": "string", "example": "OK" },
+                    "status": { "type": "number", "example": 200 },
+                    "metadata": {
                       "$ref": "#/components/schemas/ProductResponse"
                     }
                   }
@@ -422,10 +417,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "success" },
-                    "message": {
-                      "type": "string",
-                      "example": "Product deleted successfully"
+                    "message": { "type": "string", "example": "OK" },
+                    "status": { "type": "number", "example": 200 },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {}
                     }
                   }
                 }
@@ -496,12 +492,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "success" },
-                    "message": {
-                      "type": "string",
-                      "example": "Stock updated successfully"
-                    },
-                    "data": {
+                    "message": { "type": "string", "example": "OK" },
+                    "status": { "type": "number", "example": 200 },
+                    "metadata": {
                       "$ref": "#/components/schemas/ProductResponse"
                     }
                   }
