@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 const { generateSlug } = require("../../utils");
-
+const { PRODUCT_STATUS } = require("../../common/constant");
 const productSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -11,12 +11,13 @@ const productSchema = new Schema(
     images: { type: [String], default: [] },
     status: {
       type: String,
-      enum: ["active", "inactive", "out_of_stock"],
-      default: "active",
+      enum: Object.values(PRODUCT_STATUS),
+      default: PRODUCT_STATUS.ACTIVE,
     },
     category: { type: Schema.Types.ObjectId, ref: "Category" },
     brand: { type: Schema.Types.ObjectId, ref: "Brand" },
     attributes: { type: Object, default: {} },
+    user: { type: Schema.Types.ObjectId },
   },
   { timestamps: true }
 );
