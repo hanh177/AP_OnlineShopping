@@ -1,7 +1,12 @@
 const User = require("../models/user.model");
 const { BadRequest, Unauthorized } = require("../../common/errorResponse");
 const { OK } = require("../../common/successResponse");
-
+const {
+  generateTokenPair,
+  revokeRefreshToken,
+  hashToken,
+} = require("../../common/auth");
+const RefreshToken = require("../models/refreshToken.model");
 class AuthController {
   async register(req, res) {
     const { name, email, password } = req.body;
@@ -9,11 +14,12 @@ class AuthController {
     if (holdUser) {
       throw BadRequest("Email already exists");
     }
+
     const user = await User.create({ name, email, password });
-    const token = user.generateToken();
+    const { access_token, refresh_token } = await generateTokenPair(user);
     return OK({
       res,
-      metadata: { token, user: user.toJSON() },
+      metadata: { access_token, refresh_token, user: user.toJSON() },
     });
   }
 
@@ -27,10 +33,10 @@ class AuthController {
     if (!isMatch) {
       throw Unauthorized("Invalid email or password");
     }
-    const token = user.generateToken();
+    const { access_token, refresh_token } = await generateTokenPair(user);
     return OK({
       res,
-      metadata: { token, user: user.toJSON() },
+      metadata: { access_token, refresh_token, user: user.toJSON() },
     });
   }
 
@@ -68,6 +74,48 @@ class AuthController {
       res,
       metadata: {},
       message: "Password changed successfully",
+    });
+  }
+
+  async logout(req, res) {
+    const { user, jti } = req;
+    await revokeRefreshToken({
+      userId: user._id,
+      jti,
+    });
+
+    return OK({
+      res,
+      metadata: {},
+      message: "Logout successfully",
+    });
+  }
+
+  async refreshToken(req, res) {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      throw BadRequest("Refresh token is required");
+    }
+    const hashedToken = hashToken(refreshToken);
+    const token = await RefreshToken.findOne({
+      token: hashedToken,
+      isRevoked: false,
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (!token) {
+      throw BadRequest("Invalid refresh token");
+    }
+
+    const user = await User.findById(token.userId);
+    await revokeRefreshToken({
+      _id: token._id,
+    });
+
+    const { access_token, refresh_token } = await generateTokenPair(user);
+    return OK({
+      res,
+      metadata: { access_token, refresh_token },
     });
   }
 }

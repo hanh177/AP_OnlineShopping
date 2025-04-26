@@ -8,7 +8,7 @@ export const getMe = createAsyncThunk(
   "auth/me",
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
       if (!token) {
         return rejectWithValue("No token found");
       }
@@ -25,7 +25,9 @@ export const login = createAsyncThunk(
   async (credentials: ILoginPayload, { rejectWithValue }) => {
     try {
       const data = await authService.login(credentials);
-      localStorage.setItem("token", data.token);
+      const { access_token, refresh_token } = data;
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
       return data.user;
     } catch (error: unknown) {
       const axiosError = error as AxiosError;
@@ -39,9 +41,12 @@ export const register = createAsyncThunk(
   "auth/register",
   async (payload: IRegisterPayload, { rejectWithValue }) => {
     try {
-      const data = await authService.register(payload);
-      localStorage.setItem("token", data.token);
-      return data.user;
+      const { access_token, refresh_token, user } = await authService.register(
+        payload
+      );
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
+      return user;
     } catch (error: unknown) {
       const axiosError = error as AxiosError;
       return rejectWithValue(

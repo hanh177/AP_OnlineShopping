@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 const { Unauthorized, Forbidden } = require("../../common/errorResponse");
 const { ROLES } = require("../../common/constant");
+const { decodeToken } = require("../../common/auth");
 
 const requireAuth = async (req, res, next) => {
   const token = req.headers.authorization;
@@ -9,12 +10,16 @@ const requireAuth = async (req, res, next) => {
     throw Unauthorized();
   }
   const tokenString = token.split(" ")[1];
-  const decoded = jwt.verify(tokenString, process.env.APP_TOKEN_SECRET);
-  const user = await User.findById(decoded.id);
+  const decoded = decodeToken(tokenString);
+  if (!decoded) {
+    throw Unauthorized();
+  }
+  const user = await User.findById(decoded._id);
   if (!user || user.isDeleted) {
     throw Unauthorized();
   }
   req.user = user;
+  req.jti = decoded.jti;
   next();
 };
 
@@ -30,13 +35,16 @@ const loadUsers = async (req, res, next) => {
   if (!token) {
     return next();
   }
-  const tokenString = token.split(" ")[1];
-  const decoded = jwt.verify(tokenString, process.env.APP_TOKEN_SECRET);
-  const user = await User.findById(decoded.id);
-  if (!user) {
+  const decoded = decodeToken(tokenString);
+  if (!decoded) {
+    throw Unauthorized();
+  }
+  const user = await User.findById(decoded._id);
+  if (!user || user.isDeleted) {
     throw Unauthorized();
   }
   req.user = user;
+  req.jti = decoded.jti;
   next();
 };
 
