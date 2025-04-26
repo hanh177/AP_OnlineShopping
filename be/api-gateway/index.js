@@ -11,7 +11,7 @@ const { APP_PORT, APP_USER_PORT, APP_PRODUCT_PORT } = process.env;
 const createProxyMiddleware = (targetPort) => {
   return proxy(`http://localhost:${targetPort}`, {
     preserveHostHdr: true,
-    parseReqBody: false,
+    parseReqBody: true,
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
       if (srcReq.headers["content-type"]) {
         proxyReqOpts.headers["Content-Type"] = srcReq.headers["content-type"];
