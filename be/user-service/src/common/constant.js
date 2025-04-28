@@ -3,4 +3,5 @@ const ROLES = {
   USER: "user",
 };
 
-module.exports = { ROLES };
+const REDIS_REVOKED_PREFIX = "revoked_jti";
+module.exports = { ROLES, REDIS_REVOKED_PREFIX };

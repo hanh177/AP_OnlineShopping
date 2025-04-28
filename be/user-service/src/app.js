@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 require("./config/database");
+require("./config/redis");
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.get("/docs-json", (req, res) => res.json(swaggerDocs));

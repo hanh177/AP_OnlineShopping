@@ -10,7 +10,7 @@ const requireAuth = async (req, res, next) => {
     throw Unauthorized();
   }
   const tokenString = token.split(" ")[1];
-  const decoded = decodeToken(tokenString);
+  const decoded = await decodeToken(tokenString);
   if (!decoded) {
     throw Unauthorized();
   }
@@ -35,7 +35,7 @@ const loadUsers = async (req, res, next) => {
   if (!token) {
     return next();
   }
-  const decoded = decodeToken(tokenString);
+  const decoded = await decodeToken(tokenString);
   if (!decoded) {
     throw Unauthorized();
   }

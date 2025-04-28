@@ -99,15 +99,31 @@ class AuthController {
     const hashedToken = hashToken(refreshToken);
     const token = await RefreshToken.findOne({
       token: hashedToken,
-      isRevoked: false,
-      expiresAt: { $gt: new Date() },
     });
 
     if (!token) {
       throw BadRequest("Invalid refresh token");
     }
 
+    if (token.expiresAt < new Date()) {
+      // if the token is expired, revoke the token
+      await revokeRefreshToken({ _id: token._id });
+      throw new Error("Refresh token expired");
+    }
+
+    if (token.isRevoked) {
+      // if the token is revoked, maybe the user is a hacker, need to revoke all refresh tokens of this user
+      await revokeRefreshToken({
+        userId: token.userId,
+        isRevoked: false,
+      });
+      throw new Error("Refresh token revoked");
+    }
+
     const user = await User.findById(token.userId);
+    if (!user) {
+      throw BadRequest("User not found");
+    }
     await revokeRefreshToken({
       _id: token._id,
     });
