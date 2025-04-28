@@ -1,18 +1,7 @@
 const axios = require("axios");
-const { APP_USER_PORT, APP_PRODUCT_PORT, APP_PORT } = process.env;
-
-const services = [
-  {
-    name: "Users",
-    url: `http://localhost:${APP_USER_PORT}/docs-json`,
-    prefix: "/users", // prefix for each path when proxy to user service
-  },
-  {
-    name: "Products",
-    url: `http://localhost:${APP_PRODUCT_PORT}/docs-json`,
-    prefix: "/products", // prefix for each path when proxy to product service
-  },
-];
+const swaggerUi = require("swagger-ui-express");
+const { API_SERVICES } = require("../constant");
+const { APP_PORT } = process.env;
 
 const getAggregatedDocs = async () => {
   const docs = {
@@ -33,14 +22,14 @@ const getAggregatedDocs = async () => {
     ],
   };
 
-  for (const service of services) {
+  for (const service of API_SERVICES) {
     try {
-      const response = await axios.get(service.url);
+      const response = await axios.get(service.apiDocUrl);
       const { paths, components } = response.data;
 
       // add prefix to each path
       Object.entries(paths).forEach(([path, methods]) => {
-        const newPath = `${service.prefix}${path}`;
+        const newPath = `${service.proxyPath}${path}`;
         docs.paths[newPath] = methods;
       });
 
@@ -64,4 +53,15 @@ const getAggregatedDocs = async () => {
   return docs;
 };
 
-module.exports = getAggregatedDocs;
+const loadSwaggerDocs = (app) => {
+  app.get("/docs-json", async (req, res) => {
+    const docs = await getAggregatedDocs();
+    res.json(docs);
+  });
+
+  app.use("/docs", swaggerUi.serve, async (req, res, next) => {
+    const docs = await getAggregatedDocs();
+    return swaggerUi.setup(docs)(req, res, next);
+  });
+};
+module.exports = loadSwaggerDocs;
