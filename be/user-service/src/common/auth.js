@@ -62,12 +62,9 @@ const revokeRefreshToken = async (query) => {
   const instance = await redisClient;
   const pipeline = instance.client.multi();
   for (const token of tokens) {
-    pipeline.set(
-      `${REDIS_REVOKED_PREFIX}:${token.jti}`,
-      "true",
-      "EX",
-      30 * 24 * 60 * 60
-    ); // expire in 30 days
+    pipeline.set(`${REDIS_REVOKED_PREFIX}:${token.jti}`, "true", {
+      EX: 30 * 24 * 60 * 60,
+    }); // expire in 30 days
   }
   await pipeline.exec();
 
