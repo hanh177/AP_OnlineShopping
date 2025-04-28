@@ -1,5 +1,5 @@
 const proxy = require("express-http-proxy");
-const { API_SERVICES } = require("../constant");
+const { API_SERVICES, HEADER_AUTH } = require("./constant");
 
 const createProxyMiddleware = (targetPort) => {
   return proxy(`http://localhost:${targetPort}`, {
@@ -9,6 +9,11 @@ const createProxyMiddleware = (targetPort) => {
       if (srcReq.headers["content-type"]) {
         proxyReqOpts.headers["Content-Type"] = srcReq.headers["content-type"];
       }
+
+      if (srcReq.decodedData) {
+        proxyReqOpts.headers[HEADER_AUTH] = JSON.stringify(srcReq.decodedData);
+      }
+
       return proxyReqOpts;
     },
   });

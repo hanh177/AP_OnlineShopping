@@ -1,5 +1,5 @@
 const { APP_USER_PORT, APP_PRODUCT_PORT } = process.env;
-
+module.exports.REDIS_REVOKED_PREFIX = "revoked_jti";
 module.exports.API_SERVICES = [
   {
     name: "User Service",
@@ -14,3 +14,5 @@ module.exports.API_SERVICES = [
     apiDocUrl: `http://localhost:${APP_PRODUCT_PORT}/docs-json`,
   },
 ];
+
+module.exports.HEADER_AUTH = "x-auth";

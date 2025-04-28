@@ -34,23 +34,6 @@ const generateTokenPair = async ({ _id, role, email, name }) => {
   return { access_token, refresh_token: refeshToken };
 };
 
-const decodeToken = async (token) => {
-  try {
-    const decoded = jwt.verify(token, APP_TOKEN_SECRET);
-
-    // Check if the token is revoked from redis
-    const instance = await redisClient;
-    const isTokenRevoked = await instance.client.exists(
-      `${REDIS_REVOKED_PREFIX}:${decoded.jti}`
-    );
-
-    return isTokenRevoked ? null : decoded;
-  } catch (error) {
-    console.log("Token verification error", error);
-    return null;
-  }
-};
-
 const revokeRefreshToken = async (query) => {
   const tokens = await RefreshToken.find(query);
 
@@ -75,6 +58,5 @@ const revokeRefreshToken = async (query) => {
 module.exports = {
   hashToken,
   generateTokenPair,
-  decodeToken,
   revokeRefreshToken,
 };

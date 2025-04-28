@@ -1,6 +1,6 @@
 const axios = require("axios");
 const swaggerUi = require("swagger-ui-express");
-const { API_SERVICES } = require("../constant");
+const { API_SERVICES } = require("./constant");
 const { APP_PORT } = process.env;
 
 const getAggregatedDocs = async () => {

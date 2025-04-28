@@ -1,23 +1,19 @@
-const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 const { Unauthorized, Forbidden } = require("../../common/errorResponse");
-const { ROLES } = require("../../common/constant");
-const { decodeToken } = require("../../common/auth");
+const { ROLES, HEADER_AUTH } = require("../../common/constant");
 
 const requireAuth = async (req, res, next) => {
-  const token = req.headers.authorization;
-  if (!token) {
-    throw Unauthorized();
-  }
-  const tokenString = token.split(" ")[1];
-  const decoded = await decodeToken(tokenString);
+  const decoded = JSON.parse(req.headers[HEADER_AUTH] || "{}");
+
   if (!decoded) {
     throw Unauthorized();
   }
+
   const user = await User.findById(decoded._id);
   if (!user || user.isDeleted) {
     throw Unauthorized();
   }
+
   req.user = user;
   req.jti = decoded.jti;
   next();
@@ -31,18 +27,17 @@ const hasRole = (role) => async (req, res, next) => {
 };
 
 const loadUsers = async (req, res, next) => {
-  const token = req.headers.authorization;
-  if (!token) {
+  const decoded = JSON.parse(req.headers[HEADER_AUTH] || "{}");
+
+  if (!decoded) {
     return next();
   }
-  const decoded = await decodeToken(tokenString);
-  if (!decoded) {
-    throw Unauthorized();
-  }
+
   const user = await User.findById(decoded._id);
   if (!user || user.isDeleted) {
     throw Unauthorized();
   }
+
   req.user = user;
   req.jti = decoded.jti;
   next();
