@@ -10,7 +10,6 @@ A modern e-commerce platform built with microservices architecture, featuring a 
 │   ├── api-gateway/    # API Gateway service
 │   ├── user-service/   # User management service
 |   ├── product-service/# Product management service
-│   └── proxy/         # Nginx reverse proxy
 └── fe/                # Frontend React application
 ```
 
