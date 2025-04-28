@@ -55,3 +55,15 @@ export const register = createAsyncThunk(
     }
   }
 );
+
+// Logout action
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await authService.logout();
+    } catch (error) {
+      return rejectWithValue("Logout failed");
+    }
+  }
+);

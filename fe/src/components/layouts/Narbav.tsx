@@ -1,5 +1,5 @@
-import { RootState } from "@/store";
-import { logout } from "@/store/slices/authSlice";
+import { AppDispatch, RootState } from "@/store";
+import { logout } from "@/store/actions/authAction";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -7,11 +7,11 @@ export default function Navbar() {
   const { isAuthenticated, user } = useSelector(
     (state: RootState) => state.auth
   );
-  const dispatch = useDispatch();
+   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logout())
     navigate("/login");
   };
   return (

@@ -1,5 +1,5 @@
-import store from "@/store";
 import axios from "axios";
+import API_ROUTES from "./api-routes";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "https://api.example.com",
@@ -27,12 +27,13 @@ API.interceptors.response.use(
       const refreshToken = localStorage.getItem("refresh_token");
 
       if (!refreshToken) {
-        store.dispatch({ type: "auth/logout" });
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
         return Promise.reject(error);
       }
 
       try {
-        const data = await API.post("/users/auth/refresh-token", {
+        const data = await API.post(API_ROUTES.AUTH.REFRESH_TOKEN, {
           refreshToken,
         });
         const { access_token, refresh_token } = data.data.metadata;
@@ -44,7 +45,8 @@ API.interceptors.response.use(
 
         return API.request(error.config);
       } catch (refreshError) {
-        store.dispatch({ type: "auth/logout" });
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
         return Promise.reject(refreshError);
       }
     }
