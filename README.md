@@ -19,6 +19,7 @@ A modern e-commerce platform built with microservices architecture, featuring a 
 - Node.js (v23 or higher)
 - Docker and Docker Compose (for Docker setup)
 - MongoDB (for manual setup)
+- Redis (for manual setup)
 
 ## Setup Instructions
 
@@ -43,7 +44,8 @@ This will start:
 - User Service on port 4001
 - Product Service on port 4002
 - MongoDB on port 27017
-- Nginx Proxy on port 4000
+- Redis on port 6379
+- Api Gateway on port 4000
 
 3. Start the frontend development server:
 
@@ -64,40 +66,37 @@ The frontend will be available at `http://localhost:5173`
    - Install MongoDB locally or use MongoDB Atlas
    - Create a database named `ap_online_shopping`
 
-2. Configure User Service:
+2. Set up Redis:
+
+   - Install Redis
+
+3. Configure User Service:
 
 ```bash
 cd be/user-service
 npm install
-cp .env.example .env  # Create and configure your environment variables
+cp .env.sample .env  # Create and configure your environment variables
 npm start
 ```
 
-3. Configure Product Service:
+4. Configure Product Service:
 
 ```bash
 cd be/product-service
 npm install
-cp .env.example .env  # Create and configure your environment variables
+cp .env.sample .env  # Create and configure your environment variables
 npm install -g migrate-mongo
 migrate-mongo up    # migrate default data with https://www.npmjs.com/package/migrate-mongo
 npm start
 ```
 
-4. Configure API Gateway:
+5. Configure API Gateway:
 
 ```bash
 cd ../api-gateway
 npm install
-cp .env.example .env  # Create and configure your environment variables
+cp .env.sample .env  # Create and configure your environment variables
 npm start
-```
-
-5. Configure Nginx Proxy:
-
-```bash
-cd ../proxy
-# Configure nginx.conf as needed
 ```
 
 #### Frontend Setup
@@ -121,19 +120,31 @@ Create `.env` files in each service directory with the following variables:
 ```env
 # User Service (.env)
 PORT=4001
-MONGODB_URI=mongodb://localhost:27017/ap_online_shopping
-JWT_SECRET=your_jwt_secret
+MONGO_URI=mongodb://localhost:27017/user_service
+APP_TOKEN_SECRET=need_to_change
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+AWS_REGION=your-region
+AWS_S3_BUCKET_NAME=your-bucket-name
+REDIS_HOST=localhost
+REDIS_PORT=6379
 
 # Product Service (.env)
 PORT=4002
-MONGODB_URI=mongodb://localhost:27017/ap_online_shopping
-JWT_SECRET=your_jwt_secret
+MONGO_URI=mongodb://localhost:27017/product_service
+APP_TOKEN_SECRET=need_to_change
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+AWS_REGION=your-region
+AWS_S3_BUCKET_NAME=your-bucket-name
 
 # API Gateway (.env)
 APP_PORT=4000
 USER_SERVICE_URL=http://localhost:4001
 PRODUCT_SERVICE_URL=http://localhost:4002
 APP_TOKEN_SECRET=need_to_change
+REDIS_HOST=localhost
+REDIS_PORT=6379
 ```
 
 ### Frontend
