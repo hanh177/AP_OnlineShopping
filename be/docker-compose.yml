@@ -20,6 +20,8 @@ services:
       - PRODUCT_SERVICE_URL=http://product-service:4002
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    volumes:
+      - ./api-gateway:/app # Map source code vào container
 
   user-service:
     build:
@@ -41,6 +43,8 @@ services:
       - MONGO_URI=mongodb://mongodb:27017/user_service
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    volumes:
+      - ./user-service:/app # Map source code vào container
 
   product-service:
     build:
@@ -58,6 +62,8 @@ services:
     environment:
       - PORT=4002
       - MONGO_URI=mongodb://mongodb:27017/product_service
+    volumes:
+      - ./product-service:/app # Map source code vào container
 
   mongodb:
     image: mongo:6
