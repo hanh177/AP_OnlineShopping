@@ -130,9 +130,10 @@ MONGODB_URI=mongodb://localhost:27017/ap_online_shopping
 JWT_SECRET=your_jwt_secret
 
 # API Gateway (.env)
-PORT=4000
-APP_USER_PORT=4001
-APP_PRODUCT_PORT=4002
+APP_PORT=4000
+USER_SERVICE_URL=http://localhost:4001
+PRODUCT_SERVICE_URL=http://localhost:4002
+APP_TOKEN_SECRET=need_to_change
 ```
 
 ### Frontend

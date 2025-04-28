@@ -1,8 +1,8 @@
 const proxy = require("express-http-proxy");
 const { API_SERVICES, HEADER_AUTH } = require("./constant");
 
-const createProxyMiddleware = (targetPort) => {
-  return proxy(`http://localhost:${targetPort}`, {
+const createProxyMiddleware = (targetUrl) => {
+  return proxy(targetUrl, {
     preserveHostHdr: true,
     parseReqBody: true,
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
@@ -21,7 +21,7 @@ const createProxyMiddleware = (targetPort) => {
 
 const loadServices = (app) => {
   API_SERVICES.forEach((service) => {
-    app.use(service.proxyPath, createProxyMiddleware(service.port));
+    app.use(service.proxyPath, createProxyMiddleware(service.url));
   });
 };
 module.exports = loadServices;

@@ -1,4 +1,26 @@
 services:
+  proxy:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./api-gateway/.env
+    networks:
+      - app-network
+    depends_on:
+      - redis
+      - user-service
+      - product-service
+    environment:
+      - APP_TOKEN_SECRET=need_to_change
+      - APP_PORT=4000
+      - USER_SERVICE_URL=http://user-service:4001
+      - PRODUCT_SERVICE_URL=http://product-service:4002
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
   user-service:
     build:
       dockerfile: Dockerfile
@@ -10,8 +32,15 @@ services:
       - ./user-service/.env
     depends_on:
       - mongodb
+      - redis
     networks:
       - app-network
+    environment:
+      - APP_TOKEN_SECRET=need_to_change
+      - PORT=4001
+      - MONGO_URI=mongodb://mongodb:27017/user_service
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
 
   product-service:
     build:
@@ -26,6 +55,9 @@ services:
       - mongodb
     networks:
       - app-network
+    environment:
+      - PORT=4002
+      - MONGO_URI=mongodb://mongodb:27017/product_service
 
   mongodb:
     image: mongo:6
@@ -38,19 +70,21 @@ services:
     networks:
       - app-network
 
-  nginx-proxy:
-    build:
-      dockerfile: Dockerfile
-      context: ./proxy
-    depends_on:
-      - user-service
+  redis:
+    image: redis:7
+    restart: always
+    container_name: redis
     ports:
-      - "4000:80"
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
     networks:
       - app-network
 
 networks:
   app-network:
+    driver: bridge
 
 volumes:
   mongo_data:
+  redis_data:

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { pick } = require("lodash");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { ROLES } = require("../../common/constant");
 // Define the schema for the user model

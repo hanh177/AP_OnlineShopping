@@ -1,17 +1,17 @@
-const { APP_USER_PORT, APP_PRODUCT_PORT } = process.env;
+const { USER_SERVICE_URL, PRODUCT_SERVICE_URL } = process.env;
 module.exports.REDIS_REVOKED_PREFIX = "revoked_jti";
 module.exports.API_SERVICES = [
   {
     name: "User Service",
-    port: APP_USER_PORT,
+    url: USER_SERVICE_URL,
     proxyPath: "/users",
-    apiDocUrl: `http://localhost:${APP_USER_PORT}/docs-json`,
+    apiDocUrl: `${USER_SERVICE_URL}/docs-json`,
   },
   {
     name: "Product Service",
-    port: APP_PRODUCT_PORT,
+    url: PRODUCT_SERVICE_URL,
     proxyPath: "/products",
-    apiDocUrl: `http://localhost:${APP_PRODUCT_PORT}/docs-json`,
+    apiDocUrl: `${PRODUCT_SERVICE_URL}/docs-json`,
   },
 ];
 
