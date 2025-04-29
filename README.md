@@ -62,12 +62,11 @@ The frontend will be available at `http://localhost:5173`
 
 1. Set up MongoDB:
 
-   - Install MongoDB locally or use MongoDB Atlas
-   - Create a database named `ap_online_shopping`
+   - Install MongoDB locally 
 
 2. Set up Redis:
 
-   - Install Redis
+   - Install Redis locally
 
 3. Configure User Service:
 
@@ -216,6 +215,65 @@ module.exports = {
   changelogCollectionName: "changelog",
 };
 ```
+
+## API Document
+The project uses Swagger for API documentation.
+
+At the API Gateway, all APIs from microservices are aggregated into a single Swagger UI page at http://localhost:4000/docs for easier testing and browsing.
+
+### Setup Swagger for Each Service
+Each backend service (user-service, product-service) has a Swagger UI available for easy API exploration.
+  - Swagger is automatically available when you start each service (via Docker or manual setup).
+  - After starting the backend services, you can access the Swagger UI at:
+    + User Service Swagger: http://localhost:4001/docs
+    + Product Service Swagger: http://localhost:4002/docs
+
+### How Swagger is Integrated
+- Each service uses the swagger-jsdoc and swagger-ui-express packages.
+- The static Swagger JSON file located at:
+ ```bash
+  src/swagger.json
+  ```
+- This swagger.json contains the OpenAPI 3.0 specification for that service's APIs.
+- The API Gateway loads and aggregates these Swagger specifications from all backend services. It then exposes a unified Swagger UI at: http://localhost:4000/docs
+- This allows developers to test and explore all APIs from a single location, instead of accessing each service individually.
+
+### Modify or Add APIs
+Go to the service folder, edit src/swagger.json to add new API definitions or update existing ones.
+Example snippet inside `src/swagger.json`:
+
+```
+{
+  "paths": {
+    "/users/login": {
+      "post": {
+        "summary": "Login user",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Successful login" },
+          "400": { "description": "Invalid credentials" }
+        }
+      }
+    }
+  }
+}
+
+```
+
 
 ## Building for Production
 
