@@ -1,4 +1,4 @@
-const slugify = require("slug");
+const slugify = require("slug").default;
 
 const randomString = (length) =>
   Math.random()

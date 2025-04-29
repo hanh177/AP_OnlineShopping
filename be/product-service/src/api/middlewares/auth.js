@@ -1,17 +1,41 @@
-const jwt = require("jsonwebtoken");
+const { ROLES, HEADER_AUTH } = require("../../common/constant");
 const { Unauthorized, Forbidden } = require("../../common/errorResponse");
-const { ROLES } = require("../../common/constant");
 
-const requireAuth = async (req, res, next) => {
+const requireAuth = (req, res, next) => {
+  const decoded = JSON.parse(req.headers[HEADER_AUTH] || "{}");
+
+  if (!decoded._id) {
+    throw Unauthorized();
+  }
+
+  const { jti, ...user } = decoded;
+  req.user = user;
   next();
 };
 
-const hasRole = (role) => async (req, res, next) => {
+const hasRole = (role) => (req, res, next) => {
+  if ((req.user.role || ROLES.USER) !== role) {
+    throw Forbidden();
+  }
   next();
 };
 
-const loadUsers = async (req, res, next) => {
+const loadUsers = (req, res, next) => {
+  const decoded = JSON.parse(req.headers[HEADER_AUTH] || "{}");
+
+  if (!decoded._id) {
+    return next();
+  }
+
+  const { jti, ...user } = decoded;
+  req.user = user;
   next();
 };
 
-module.exports = { requireAuth, hasRole, loadUsers };
+const isProductOwner = (req, res, next) => {
+  if ((req.user.role !== ROLES.ADMIN && req.product.user) !== req.user._id)
+    throw Forbidden();
+  next();
+};
+
+module.exports = { requireAuth, hasRole, loadUsers, isProductOwner };

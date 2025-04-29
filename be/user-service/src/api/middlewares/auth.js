@@ -5,7 +5,7 @@ const { ROLES, HEADER_AUTH } = require("../../common/constant");
 const requireAuth = async (req, res, next) => {
   const decoded = JSON.parse(req.headers[HEADER_AUTH] || "{}");
 
-  if (!decoded) {
+  if (!decoded._id) {
     throw Unauthorized();
   }
 
@@ -29,7 +29,7 @@ const hasRole = (role) => async (req, res, next) => {
 const loadUsers = async (req, res, next) => {
   const decoded = JSON.parse(req.headers[HEADER_AUTH] || "{}");
 
-  if (!decoded) {
+  if (!decoded._id) {
     return next();
   }
 
