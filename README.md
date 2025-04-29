@@ -31,7 +31,14 @@ git clone <repository-url>
 cd AP_OnlineShopping
 ```
 
-2. Start the backend services:
+2. Create and configure your environment variables
+cd each service:
+
+```bash
+cp .env.sample .env.docker
+```
+
+3. Start the backend services:
 
 ```bash
 cd be

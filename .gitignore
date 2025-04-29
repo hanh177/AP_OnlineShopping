@@ -1,7 +1,9 @@
 .DS_Store
 **/.env
+**/.env.docker
 **/.DS_Store
 **/node_modules
 **/logs
 **/package-lock.json
 **/yarn.lock
+

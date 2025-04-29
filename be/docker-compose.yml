@@ -6,20 +6,13 @@ services:
     ports:
       - "4000:4000"
     env_file:
-      - ./api-gateway/.env
+      - ./api-gateway/.env.docker
     networks:
       - app-network
     depends_on:
       - redis
       - user-service
       - product-service
-    environment:
-      - APP_TOKEN_SECRET=need_to_change
-      - APP_PORT=4000
-      - USER_SERVICE_URL=http://user-service:4001
-      - PRODUCT_SERVICE_URL=http://product-service:4002
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
     volumes:
       - ./api-gateway:/app # Map source code vào container
 
@@ -31,18 +24,12 @@ services:
     ports:
       - "4001:4001"
     env_file:
-      - ./user-service/.env
+      - ./user-service/.env.docker
     depends_on:
       - mongodb
       - redis
     networks:
       - app-network
-    environment:
-      - APP_TOKEN_SECRET=need_to_change
-      - PORT=4001
-      - MONGO_URI=mongodb://mongodb:27017/user_service
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
     volumes:
       - ./user-service:/app # Map source code vào container
 
@@ -54,14 +41,11 @@ services:
     ports:
       - "4002:4002"
     env_file:
-      - ./product-service/.env
+      - ./product-service/.env.docker
     depends_on:
       - mongodb
     networks:
       - app-network
-    environment:
-      - PORT=4002
-      - MONGO_URI=mongodb://mongodb:27017/product_service
     volumes:
       - ./product-service:/app # Map source code vào container
 
