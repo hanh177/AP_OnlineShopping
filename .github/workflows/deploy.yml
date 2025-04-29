@@ -19,7 +19,7 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         source: "be/"
-        target: "/home/${{ secrets.EC2_USER }}/be"
+        target: "/home/${{ secrets.EC2_USER }}/ap_shoppingonline"
 
     - name: Run docker-compose on EC2
       uses: appleboy/ssh-action@v1.0.3
@@ -28,7 +28,7 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         script: |
-          cd ~/be/be
+          cd ~/ap_shoppingonline/be
           docker compose down || true
           docker compose pull || true
           docker compose up -d --build
