@@ -1,4 +1,4 @@
-name: Deploy BE to EC2
+name: Deploy app to EC2
 
 on:
   push:
@@ -12,13 +12,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Copy BE folder to EC2
+    - name: Copy source code to EC2
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.EC2_IP }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        source: "be/"
+        source: "be/,fe/"
         target: "/home/${{ secrets.EC2_USER }}/ap_shoppingonline"
 
     - name: Run docker-compose on EC2
@@ -32,4 +32,17 @@ jobs:
           docker compose down || true
           docker compose pull || true
           docker compose -f docker-compose.production.yml up -d --build
+
+    - name: Build and Run Frontend Container on EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_IP }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        script: |
+          cd ~/ap_shoppingonline/fe
+          docker build -t react-frontend .
+          docker stop react-fe-container || true
+          docker rm react-fe-container || true
+          docker run -d -p 80:80 --name react-fe-container -e VITE_API_URL=${{ secrets.VITE_API_URL }} react-frontend
 
