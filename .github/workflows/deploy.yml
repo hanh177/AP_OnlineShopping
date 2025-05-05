@@ -30,12 +30,6 @@ jobs:
         script: |
           cd ~/ap_shoppingonline/be
           cd api-gateway
-          cp .env.sample .env.docker
-          cd ../product-service
-          cp .env.sample .env.docker
-          cd ../user-service
-          cp .env.sample .env.docker
-          cd ..
           docker compose down || true
           docker compose pull || true
           docker compose -f docker-compose.production.yml up -d --build
