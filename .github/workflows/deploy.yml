@@ -9,41 +9,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Copy source code to EC2
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.EC2_IP }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        source: "be/,fe/"
-        target: "/home/${{ secrets.EC2_USER }}/ap_shoppingonline"
+      - name: Copy source code to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_IP }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          source: "be/,fe/"
+          target: "/home/${{ secrets.EC2_USER }}/ap_shoppingonline"
 
-    - name: Run docker-compose on EC2
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_IP }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        script: |
-          cd ~/ap_shoppingonline/be
-          docker compose down || true
-          docker compose pull || true
-          docker compose -f docker-compose.production.yml up -d --build
+      - name: Run docker-compose on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_IP }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/ap_shoppingonline/be
+            docker compose down || true
+            docker compose pull || true
+            docker compose -f docker-compose.production.yml up -d --build
 
-    - name: Build and Run Frontend Container on EC2
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_IP }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        script: |
-          cd ~/ap_shoppingonline/fe
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
-          docker build -t react-frontend .
-          docker stop react-fe-container || true
-          docker rm react-fe-container || true
-          docker run -d -p 80:80 --name react-fe-container react-frontend
-
+      - name: Build and Run Frontend Container on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_IP }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/ap_shoppingonline/fe
+            echo "VITE_API_URL=http://${{ secrets.EC2_IP }}:4000/" > .env
+            docker build -t react-frontend .
+            docker stop react-fe-container || true
+            docker rm react-fe-container || true
+            docker run -d -p 80:80 --name react-fe-container react-frontend
