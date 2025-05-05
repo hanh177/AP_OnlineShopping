@@ -29,7 +29,6 @@ jobs:
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         script: |
           cd ~/ap_shoppingonline/be
-          cd api-gateway
           docker compose down || true
           docker compose pull || true
           docker compose -f docker-compose.production.yml up -d --build
