@@ -41,8 +41,9 @@ jobs:
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         script: |
           cd ~/ap_shoppingonline/fe
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
           docker build -t react-frontend .
           docker stop react-fe-container || true
           docker rm react-fe-container || true
-          docker run -d -p 80:80 --name react-fe-container -e VITE_API_URL=${{ secrets.VITE_API_URL }} react-frontend
+          docker run -d -p 80:80 --name react-fe-container react-frontend
 
