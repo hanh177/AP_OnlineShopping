@@ -16,7 +16,10 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store";
 import { z } from "zod";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import logo from "@/assets/images/logo.png";
+import SocialLoginBlock from "@/components/ui/social-login-block";
+
 const formSchema = z
   .object({
     name: z.string().min(2),
@@ -61,6 +64,12 @@ export default function Register() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <div className="flex justify-center">
+          <Link to="/" className="flex flex-col items-center">
+            <img src={logo} className="w-16 h-16" />
+            <h3 className="text-primary">AP Shopping</h3>
+          </Link>
+        </div>
         <FormField
           control={form.control}
           name="name"
@@ -121,9 +130,22 @@ export default function Register() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isLoading}>
+        <Button className="w-full" type="submit" disabled={isLoading}>
           {isLoading ? "Registering..." : "Register"}
         </Button>
+
+        <SocialLoginBlock />
+
+        <div className="flex flex-col items-center gap-2">
+          <p className="font-light text-sm ">
+            Already have an account?{" "}
+            <Link to="/login">
+              <span className=" text-primary hover:font-medium hover:underline transition-all">
+                Sign in
+              </span>
+            </Link>
+          </p>
+        </div>
       </form>
     </Form>
   );
