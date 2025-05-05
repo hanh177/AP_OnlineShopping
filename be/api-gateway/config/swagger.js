@@ -17,7 +17,7 @@ const getAggregatedDocs = async () => {
     },
     servers: [
       {
-        url: APP_URL,
+        url: PUBLIC_API_URL || APP_URL,
       },
     ],
   };
