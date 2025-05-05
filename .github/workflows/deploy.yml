@@ -12,16 +12,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Copy source code to EC2
+      - name: Install and Build Frontend
+        working-directory: ./fe
+        run: |
+          npm install
+          echo "VITE_API_URL=http://${{ secrets.EC2_IP }}:4000/" > .env
+          npm run build
+
+      - name: Copy backend and frontend build to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_IP }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          source: "be/,fe/"
+          source: |
+            be/
+            fe/build/
           target: "/home/${{ secrets.EC2_USER }}/ap_shoppingonline"
 
-      - name: Run docker-compose on EC2
+      - name: Run docker-compose for backend on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_IP }}
@@ -41,8 +50,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
             cd ~/ap_shoppingonline/fe
-            echo "VITE_API_URL=http://${{ secrets.EC2_IP }}:4000/" > .env
-            docker build -t react-frontend .
+
             docker stop react-fe-container || true
             docker rm react-fe-container || true
+            docker build -t react-frontend .
             docker run -d -p 80:80 --name react-fe-container react-frontend
