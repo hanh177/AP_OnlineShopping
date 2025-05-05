@@ -3,7 +3,7 @@ services:
     build:
       context: ./api-gateway
       dockerfile: Dockerfile
-      container_name: proxy-container
+    container_name: proxy-container
     ports:
       - "4000:4000"
     env_file:
