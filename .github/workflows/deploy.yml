@@ -27,8 +27,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           source: |
-            be/
-            fe/build/
+            be/*
+            fe/Dockerfile
+            fe/dist/*
           target: "/home/${{ secrets.EC2_USER }}/ap_shoppingonline"
 
       - name: Run docker-compose for backend on EC2
