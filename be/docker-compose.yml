@@ -1,5 +1,5 @@
 services:
-  proxy:
+  proxy-container:
     build:
       context: ./api-gateway
       dockerfile: Dockerfile
