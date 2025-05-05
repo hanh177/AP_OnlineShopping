@@ -15,7 +15,8 @@ jobs:
       - name: Install and Build Frontend
         working-directory: ./fe
         run: |
-          npm install
+          rm -rf package-lock.json
+          npm install --unsafe-perm
           echo "VITE_API_URL=http://${{ secrets.EC2_IP }}:4000/" > .env
           npm run build
 
