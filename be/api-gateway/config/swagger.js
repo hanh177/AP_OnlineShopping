@@ -1,7 +1,7 @@
 const axios = require("axios");
 const swaggerUi = require("swagger-ui-express");
 const { API_SERVICES } = require("./constant");
-const { APP_PORT } = process.env;
+const { APP_URL } = process.env;
 
 const getAggregatedDocs = async () => {
   const docs = {
@@ -17,7 +17,7 @@ const getAggregatedDocs = async () => {
     },
     servers: [
       {
-        url: `http://localhost:${APP_PORT}`,
+        url: APP_URL,
       },
     ],
   };

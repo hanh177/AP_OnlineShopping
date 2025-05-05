@@ -13,7 +13,7 @@ const getSwaggerConfig = () => {
     components: {},
     servers: [
       {
-        url: `http://localhost:${process.env.PORT}`,
+        url: `${process.env.BASE_URL}`,
       },
     ],
   };
