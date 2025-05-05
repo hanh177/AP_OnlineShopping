@@ -19,6 +19,11 @@ jobs:
           npm install --unsafe-perm
           echo "VITE_API_URL=http://${{ secrets.EC2_IP }}:4000/" > .env
           npm run build
+      - name: List files in backend and frontend
+        run: |
+          ls -l be
+          ls -l fe/dist
+          ls -l fe/build
 
       - name: Copy backend and frontend build to EC2
         uses: appleboy/scp-action@v0.1.7
