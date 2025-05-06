@@ -6,7 +6,6 @@ on:
 
 env:
   APP_DIR: "/home/${{ secrets.EC2_USER }}/ap_shoppingonline"
-  FRONTEND_CONTAINER: "react-fe-container"
 
 jobs:
   deploy:
@@ -23,44 +22,13 @@ jobs:
             exit 1
           fi
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: fe/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('fe/package.json') }}
-
-      - name: Install and Build Frontend
-        working-directory: ./fe
-        run: |
-          rm -rf package-lock.json
-          npm install --unsafe-perm
-          echo "VITE_API_URL=http://${{ secrets.EC2_IP }}:4000/" > .env
-          npm run build
-          if [ ! -d "dist" ] || [ -z "$(ls -A dist)" ]; then
-            echo "Frontend build failed: dist directory is missing or empty"
-            exit 1
-          fi
-
-      - name: List files in backend and frontend
-        run: |
-          ls -l be
-          ls -l fe/dist
-
-      - name: Copy backend and frontend build to EC2
+      - name: Copy backend to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_IP }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          source: |
-            be/*
-            fe/Dockerfile
-            fe/dist/*
+          source: be/*
           target: "${{ env.APP_DIR }}"
 
       - name: Ensure Docker is installed on EC2
@@ -94,31 +62,3 @@ jobs:
             docker compose pull || echo "No images to pull"
             docker compose -f docker-compose.production.yml up -d --build
             docker ps -a
-
-      - name: Build and Run Frontend Container on EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_IP }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          script: |
-            cd ${{ env.APP_DIR }}/fe
-            if ss -tuln | grep ':80 '; then
-              echo "Port 80 is already in use"
-              exit 1
-            fi
-            docker stop ${{ env.FRONTEND_CONTAINER }} || echo "No container to stop"
-            docker rm ${{ env.FRONTEND_CONTAINER }} || echo "No container to remove"
-            docker build -t react-frontend .
-            docker run -d -p 80:80 --name ${{ env.FRONTEND_CONTAINER }} react-frontend
-            docker ps -a
-            docker system prune -f
-
-      - name: Verify deployment
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_IP }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          script: |
-            curl --fail http://${{ secrets.EC2_IP }}:80 || exit 1
